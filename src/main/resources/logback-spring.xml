@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+    <springProperty name="name" source="spring.application.name"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                %d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %magenta(${PID:-}) [%green(${name})] %highlight(%5p) --- [%yellow(%X{traceId:-})][%cyan(%X{spanId:-})] %cyan(%-40.40logger{39}) : %m%n
+            </pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>http://localhost:3100/loki/api/v1/push</url>
+        </http>
+        <format>
+            <label>
+                <pattern>app:${name},host:${HOSTNAME}</pattern>
+                <keyValueSeparator>:</keyValueSeparator>
+                <readMarkers>true</readMarkers>
+            </label>
+            <message>
+                <pattern>
+                    {
+                    "level":"%level",
+                    "class":"%logger{50}",
+                    "thread":"%thread",
+                    "traceId": "%X{traceId}",
+                    "spanId": "%X{spanId}",
+                    "requestId": "%X{X-Request-ID}",
+                    "message": "%message"
+                    }
+                </pattern>
+            </message>
+            <staticLabels>true</staticLabels>
+        </format>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="LOKI"/>
+    </root>
+
+</configuration>

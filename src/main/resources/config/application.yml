@@ -1,0 +1,180 @@
+# ===================================================================
+# Spring Boot configuration.
+#
+# This configuration will be overriden by the Spring profile you use,
+# for example application-dev.yml if you use the "dev" profile.
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# ===================================================================
+
+management:
+  server:
+    port: 9944
+  endpoints:
+    web:
+      exposure:
+        include:
+          - configprops
+          - env
+          - health
+          - info
+          - logfile
+          - loggers
+          - mappings
+          - prometheus
+          - threaddump
+          - caches
+          - bpmn
+  endpoint:
+    health:
+      show-details: when_authorized
+      roles: 'ROLE_ADMIN_CLIENT_ROLE'
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState,db
+  info:
+    git:
+      mode: full
+    env:
+      enabled: true
+  health:
+    mail:
+      enabled: false # When using the MailService, configure an SMTP server and set this to true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+        step: 60
+  observations:
+    annotations:
+      enabled: true
+    key-values:
+      application: ${spring.application.name}
+  metrics:
+    enable:
+      http: true
+      jvm: true
+      log4j: true
+      logback: true
+      process: true
+      system: true
+    distribution:
+      percentiles-histogram:
+        all: true
+        http:
+          server:
+            requests: true
+      percentiles:
+        all: 0, 0.5, 0.75, 0.95, 0.99, 1.0
+    data:
+      repository:
+        autotime:
+          enabled: true
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+
+spring:
+  application:
+    name: siga-ms-people
+  profiles:
+    active: #spring.profiles.active#
+  cloud:
+    consul:
+      discovery:
+        enabled: true
+        health-check-path: ${management.server.servlet.context-path}/actuator/health
+        health-check-timeout: 30s
+        health-check-interval: 30s
+        heartbeat:
+          enabled: true
+          ttl: 30s
+          actuator-health-group: liveness
+  jmx:
+    enabled: false
+  jackson:
+    date-format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+    default-property-inclusion: non_null
+    generator:
+      WRITE_BIGDECIMAL_AS_PLAIN: true
+    serialization:
+      WRITE_BIGDECIMAL_AS_PLAIN: true
+      WRITE_DATES_AS_TIMESTAMPS: false
+  data:
+    jpa:
+      repositories:
+        bootstrap-mode: deferred
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.jdbc.time_zone: UTC
+      hibernate.generate_statistics: false
+      hibernate.id.new_generator_mappings: true
+      hibernate.cache.use_second_level_cache: true
+      hibernate.cache.use_query_cache: false
+      hibernate.temp.use_jdbc_metadata_defaults: false
+      hibernate.connection.provider_disables_autocommit: true
+      hibernate.jdbc.batch_size: 25
+      hibernate.order_inserts: true
+      hibernate.order_updates: true
+      hibernate.query.fail_on_pagination_over_collection_fetch: true
+      hibernate.query.in_clause_parameter_padding: true
+      hibernate.javax.cache.provider: com.hazelcast.client.cache.impl.HazelcastClientCachingProvider
+      hibernate.cache.region.factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+      hibernate.cache.use_minimal_puts: true
+      hibernate.cache.hazelcast.instance_name: SigaApi
+      hibernate.cache.hazelcast.use_lite_member: true
+      org.hibernate.envers.default_schema: SIGA_AUDITORIA
+      org.hibernate.envers.audit_table_suffix: _AUD
+      org.hibernate.envers.revision_field_name: REV
+      org.hibernate.envers.revision_type_field_name: REVTYPE
+  liquibase:
+    default-schema: public
+  messages:
+    basename: i18n/messages
+  main:
+    allow-bean-definition-overriding: true
+  thymeleaf:
+    mode: XHTML
+  mvc:
+    problemdetails:
+      enabled: false
+
+server:
+  servlet:
+    context-path: /api/people
+
+info:
+  project:
+    version: 1.0.0
+  display-ribbon-on-profiles: ${spring.profiles.active}
+
+siga:
+  clientApp:
+    name: ${spring.application.name}
+  cache:
+    hazelcast:
+      cluster-name: SigaHazelcastCluster
+      instance-name: SigaApi
+      map-configs:
+        - "co.gov.aerocivil.siga.core.data.entity.*"
+  security:
+    content-security-policy: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com data:"
+    authentication:
+      jwt:
+        resource-ids:
+          - account
+          - siga-client-api-key
+          - siga-client-api-rest
+        principal-attribute: preferred_username
