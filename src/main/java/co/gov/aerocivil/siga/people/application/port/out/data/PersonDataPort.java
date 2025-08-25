@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public interface PersonDataPort {
 
+    Optional<Person> findById(Long id);
+
     Optional<Person> findByIdentification(String code, String documentNumber);
 
 }

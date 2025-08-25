@@ -67,8 +67,7 @@ spring:
 
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:oracle:thin:@localhost:1521:ORCLCDB
-#    url: jdbc:oracle:thin:@192.168.100.200:1521:ORCL
+    url: jdbc:oracle:thin:@192.168.100.200:1521:ORCL
     username: SIGA_NEGOCIO
     password: SIGA_NEGOCIO
     hikari:
@@ -91,7 +90,7 @@ spring:
           jwk-set-uri: https://auth.aerocivil.local/realms/siga/protocol/openid-connect/certs
 
 server:
-  port: 9404
+  port: 9401
 
 # ===================================================================
 # Application specific properties

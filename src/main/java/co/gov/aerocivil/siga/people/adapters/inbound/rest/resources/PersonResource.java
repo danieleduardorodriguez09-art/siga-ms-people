@@ -1,5 +1,6 @@
 package co.gov.aerocivil.siga.people.adapters.inbound.rest.resources;
 
+import co.gov.aerocivil.siga.commons.utils.ResponseEntityUtils;
 import co.gov.aerocivil.siga.people.adapters.inbound.rest.dto.PersonResponse;
 import co.gov.aerocivil.siga.people.adapters.inbound.rest.dto.UserResponse;
 import co.gov.aerocivil.siga.people.adapters.inbound.rest.mapper.PersonResponseMapper;
@@ -59,10 +60,18 @@ public class PersonResource {
 
     @Timed
     @Observed
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<PersonResponse> findById(@PathVariable Long id) {
+        Person person = findPersonUseCase.findById(id);
+        return ResponseEntityUtils.wrapOrNotFound(personMapper.toDto(person));
+    }
+
+    @Timed
+    @Observed
     @GetMapping(value = "/{documentTypeCode}/{documentNumber}")
     public ResponseEntity<PersonResponse> findByIdentification(@PathVariable String documentTypeCode, @PathVariable String documentNumber) {
         Person person = findPersonUseCase.findByIdentification(documentTypeCode, documentNumber);
-        return ResponseEntity.ok(personMapper.toDto(person));
+        return ResponseEntityUtils.wrapOrNotFound(personMapper.toDto(person));
     }
 
     @Timed

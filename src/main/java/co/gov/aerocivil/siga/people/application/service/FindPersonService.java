@@ -26,9 +26,12 @@ public class FindPersonService implements FindPersonUseCase {
         return List.of();
     }
 
+    @Timed
+    @Observed
     @Override
     public Person findById(Long id) {
-        return null;
+        return personDataPort.findById(id)
+            .orElseThrow(() -> new PersonNotFoundException(null, String.valueOf(id)));
     }
 
     @Timed

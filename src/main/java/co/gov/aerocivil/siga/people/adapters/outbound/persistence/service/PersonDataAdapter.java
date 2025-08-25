@@ -24,6 +24,14 @@ public class PersonDataAdapter implements PersonDataPort {
     @Timed
     @Observed
     @Override
+    public Optional<Person> findById(Long id) {
+        return personJpaRepository.findById(id)
+            .map(personMapper::toDomain);
+    }
+
+    @Timed
+    @Observed
+    @Override
     public Optional<Person> findByIdentification(String code, String documentNumber) {
         return personJpaRepository.findOneByIdentification(code, documentNumber)
             .map(personMapper::toDomain);
