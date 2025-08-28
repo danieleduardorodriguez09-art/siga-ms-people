@@ -13,8 +13,8 @@
 management:
   otlp:
     tracing:
-      transport: grpc
       endpoint: http://localhost:4317
+      transport: grpc
 
 logging:
   level:
