@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.4</version>
+        <version>3.5.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -49,10 +49,24 @@
         <logback.version>1.5.16</logback.version>
         <spring-boot.version>3.5.4</spring-boot.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <spring-cloud.version>2025.0.0</spring-cloud.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
+        <loki-logback-appender.version>1.5.1</loki-logback-appender.version>
         <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Spring Dependencies -->
@@ -99,6 +113,22 @@
             <artifactId>spring-boot-starter-json</artifactId>
         </dependency>
 
+        <!-- Spring Service Configuration and Discovery -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-consul-config</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-consul-discovery</artifactId>
+        </dependency>
+
         <!-- SIGA Dependencies -->
         <dependency>
             <groupId>co.gov.aerocivil.siga</groupId>
@@ -108,12 +138,12 @@
         <dependency>
             <groupId>co.gov.aerocivil.siga</groupId>
             <artifactId>siga-core-commons</artifactId>
-            <version>1.0.4-SNAPSHOT</version>
+            <version>1.0.5-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>co.gov.aerocivil.siga</groupId>
             <artifactId>siga-core-data-entity</artifactId>
-            <version>1.0.4-SNAPSHOT</version>
+            <version>1.0.5-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>co.gov.aerocivil.siga</groupId>
@@ -199,7 +229,7 @@
         <dependency>
             <groupId>com.github.loki4j</groupId>
             <artifactId>loki-logback-appender</artifactId>
-            <version>1.5.1</version>
+            <version>${loki-logback-appender.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
