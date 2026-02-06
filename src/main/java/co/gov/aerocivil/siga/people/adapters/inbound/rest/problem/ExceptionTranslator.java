@@ -9,6 +9,7 @@ import co.gov.aerocivil.siga.core.problem.ProblemDetailWithCause;
 import co.gov.aerocivil.siga.core.problem.exception.BadRequestAlertException;
 import co.gov.aerocivil.siga.core.problem.exception.PersonNotFoundAlertException;
 import co.gov.aerocivil.siga.people.domain.exception.PersonNotFoundException;
+import co.gov.aerocivil.siga.people.domain.exception.PilotNotFoundException;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
@@ -123,6 +124,11 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
     private ProblemDetailWithCause getProblemDetailWithCauseForCheckRequest(Throwable throwable) {
         if (throwable instanceof PersonNotFoundException ex) {
             return (ProblemDetailWithCause) new PersonNotFoundAlertException(ex.getDocumentTypeCode(), ex.getDocumentNumber()).getBody();
+        }
+        if (throwable instanceof PilotNotFoundException) {
+            // PilotNotFoundException ya tiene @ResponseStatus(HttpStatus.NOT_FOUND)
+            // Se maneja automáticamente, pero podemos personalizar el ProblemDetail si es necesario
+            return null; // Dejar que se maneje por el flujo normal con @ResponseStatus
         }
         return null;
     }
