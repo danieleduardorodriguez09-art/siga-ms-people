@@ -4,7 +4,7 @@
 
     <springProperty name="name" source="spring.application.name"/>
 
-    <springProperty name="lokiUrl" source="logging.loki.url"/>
+    <springProperty name="lokiUrl" source="logging.loki.url" defaultValue=""/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -15,6 +15,10 @@
         </encoder>
     </appender>
 
+    <!-- Appender de Loki - solo se define cuando logging.loki.url está configurado -->
+    <!-- Para usar Loki, configura logging.loki.url en tu application.yml o Consul -->
+    <!-- Por ahora está comentado para desarrollo local -->
+    <!--
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
         <http>
             <url>${lokiUrl}</url>
@@ -41,10 +45,12 @@
             <staticLabels>true</staticLabels>
         </format>
     </appender>
+    -->
 
     <root level="info">
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="LOKI"/>
+        <!-- Appender de Loki solo se usa cuando logging.loki.url está configurado -->
+        <!-- Para desarrollo local, simplemente no configures logging.loki.url -->
     </root>
 
 </configuration>

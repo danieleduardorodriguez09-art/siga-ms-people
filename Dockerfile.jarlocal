@@ -1,0 +1,23 @@
+# ---------------------------------------------------------------------------
+# SIGA People - Imagen desde JAR ya construido (sin Maven dentro de Docker).
+# Use cuando Nexus no sea accesible desde el contenedor.
+#
+# Uso:
+#   1. En tu máquina (con acceso a Nexus): ./mvnw package -DskipTests
+#   2. mkdir -p docker-build
+#   3. copy target\siga-ms-people-1.0.0-SNAPSHOT.jar docker-build\app.jar
+#   4. docker build -f Dockerfile.jarlocal -t siga-ms-people:latest .
+# ---------------------------------------------------------------------------
+
+FROM eclipse-temurin:21-jre-alpine
+
+WORKDIR /app
+
+RUN addgroup -g 1000 appgroup && adduser -u 1000 -G appgroup -D appuser
+USER appuser
+
+COPY docker-build/app.jar app.jar
+
+EXPOSE 9406
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,0 +1,47 @@
+# ---------------------------------------------------------------------------
+# SIGA People - Entorno Docker para pruebas (Oracle + microservicio)
+#
+# Uso: docker compose up -d
+# ---------------------------------------------------------------------------
+
+services:
+  oracle:
+    image: gvenzl/oracle-xe:21
+    container_name: siga-oracle
+    environment:
+      ORACLE_PASSWORD: "OraclePass123"
+      APP_USER: "SIGA_NEGOCIO"
+      APP_USER_PASSWORD: "SIGA_NEGOCIO"
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+    restart: unless-stopped
+
+  people:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: siga-ms-people:latest
+    container_name: siga-ms-people
+    depends_on:
+      oracle:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: "dev"
+      SPRING_DATASOURCE_URL: "jdbc:oracle:thin:@//oracle:1521/XEPDB1"
+      SPRING_DATASOURCE_USERNAME: "SIGA_NEGOCIO"
+      SPRING_DATASOURCE_PASSWORD: "SIGA_NEGOCIO"
+      SERVER_PORT: "9406"
+    ports:
+      - "9407:9406"
+    restart: unless-stopped
+
+volumes:
+  oracle-data:

@@ -1,0 +1,141 @@
+# ===================================================================
+# Spring Boot configuration for the "dev" profile.
+#
+# Configuración local (sin Consul). Este archivo reemplaza lo que antes
+# se cargaba desde Consul para el perfil dev.
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# ===================================================================
+
+management:
+  server:
+    port: 9946
+  otlp:
+    tracing:
+      transport: grpc
+      endpoint: http://localhost:4317
+
+logging:
+  loki:
+    url: http://localhost:3100/loki/api/v1/push
+  level:
+    ROOT: DEBUG
+    co.gov.aerocivil.siga: DEBUG
+    com.fasterxml: ERROR
+    com.hazelcast: INFO
+    com.keycloak: ERROR
+    com.oracle.coherence: INFO
+    com.zaxxer.hikari: ERROR
+    io.micrometer: INFO
+    io.netty: INFO
+    io.opentelemetry: INFO
+    io.undertow: INFO
+    java.io: ERROR
+    javax.management: ERROR
+    jdk.event.security: ERROR
+    okhttp3.internal: ERROR
+    org.apache: ERROR
+    org.aspectj: ERROR
+    org.flowable: INFO
+    org.hibernate: ERROR
+    org.hibernate.SQL: INFO
+    org.hibernate.orm.jdbc.bind: INFO
+    org.hibernate.type.descriptor.sql: INFO
+    org.springframework.boot: INFO
+    org.springframework.security: INFO
+    org.springframework.web: INFO
+    org.springframework.cloud.commons.util.InetUtils: DEBUG
+    org.springframework.cloud.client.serviceregistry: DEBUG
+    org.springframework.cloud.consul.serviceregistry: DEBUG
+    org.springframework: ERROR
+    org.xnio: ERROR
+    sun.net: ERROR
+    sun.rmi: ERROR
+    reactor.netty: WARN
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}){faint} %clr(${PID:-}){magenta} [%clr(${spring.application.name:-}){blue}] %clr(%5p){} %clr(--- %esb(){APPLICATION_NAME}%esb{APPLICATION_GROUP}[%15.15t]){faint} [%clr(%X{traceId:-}){yellow}][%clr(%X{spanId:-}){cyan}] %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n"
+  include-application-name: false
+
+spring:
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+
+  jackson:
+    serialization:
+      indent_output: true
+
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:oracle:thin:@//localhost:1521/XEPDB1
+    username: SIGA_NEGOCIO
+    password: SIGA_NEGOCIO
+    hikari:
+      pool-name: Hikari
+      auto-commit: false
+
+  jpa:
+    database: oracle
+    properties:
+      hibernate.show_sql: true
+      # Desactiva caché de segundo nivel para no depender de Hazelcast en local
+      hibernate.cache.use_second_level_cache: false
+      hibernate.cache.use_query_cache: false
+      # Fuerza región de caché "ninguna" (evita JCache/Hazelcast aunque la librería SIGA lo configure)
+      hibernate.cache.region.factory_class: org.hibernate.cache.internal.NoCachingRegionFactory
+
+  messages:
+    cache-duration: PT1S
+
+  # Desactiva la abstracción de caché de Spring en dev (evita Hazelcast)
+  cache:
+    type: none
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://auth.aerocivil.local/realms/siga
+          jwk-set-uri: https://auth.aerocivil.local/realms/siga/protocol/openid-connect/certs
+
+  cloud:
+    inetutils:
+      preferred-networks:
+        - '^192\.168\.100\..*$'
+      ignored-interfaces:
+        - "lo"
+        - "docker.*"
+        - "veth.*"
+        - "br-.*"
+        - "VirtualBox.*"
+        - "vmnet.*"
+        - "vEthernet.*"
+        - "wsl.*"
+
+server:
+  port: 9406
+
+# ===================================================================
+# Application specific properties
+# ===================================================================
+
+siga:
+  clientApp:
+    name: sigaPeople
+  cache:
+    hazelcast:
+      backup-count: 0
+      time-to-live-seconds: 3600
+  cors:
+    allowed-origins: '*'
+    allowed-methods: '*'
+    allowed-headers: '*'
+    exposed-headers: 'Authorization,Link,X-Total-Count,X-${siga.clientApp.name}-alert,X-${siga.clientApp.name}-error,X-${siga.clientApp.name}-params'
+    allow-credentials: true
+    max-age: 1800

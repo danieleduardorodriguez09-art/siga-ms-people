@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Maven settings para build dentro de Docker.
+  Anula el mirror "maven-default-http-blocker" de Maven 3.8.1+ para permitir
+  repositorios HTTP (Nexus interno).
+-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+  <mirrors>
+    <!-- Todo excepto Nexus se resuelve contra Central: evita esperar timeout de Nexus en cada artefacto -->
+    <mirror>
+      <id>central-mirror</id>
+      <mirrorOf>*,!aerocivil-nexus</mirrorOf>
+      <name>Maven Central (todo salvo Nexus)</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </mirror>
+    <!-- Anula el bloqueo por defecto de HTTP: solo aplica a un patrón dummy -->
+    <mirror>
+      <id>maven-default-http-blocker</id>
+      <mirrorOf>external:dummy:*</mirrorOf>
+      <name>Pseudo mirror to disable default HTTP blocker</name>
+      <url>http://0.0.0.0/</url>
+      <blocked>true</blocked>
+    </mirror>
+  </mirrors>
+</settings>

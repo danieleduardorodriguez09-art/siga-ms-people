@@ -138,12 +138,12 @@
         <dependency>
             <groupId>co.gov.aerocivil.siga</groupId>
             <artifactId>siga-core-commons</artifactId>
-            <version>1.0.5-SNAPSHOT</version>
+            <version>1.0.6-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>co.gov.aerocivil.siga</groupId>
             <artifactId>siga-core-data-entity</artifactId>
-            <version>1.0.5-SNAPSHOT</version>
+            <version>1.0.6-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>co.gov.aerocivil.siga</groupId>
@@ -255,6 +255,18 @@
     </dependencies>
 
     <repositories>
+        <!-- Central primero para no esperar timeout de Nexus en cada dependencia pública -->
+        <repository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
         <repository>
             <id>aerocivil-nexus</id>
             <name>Aerocivil Nexus repository</name>
@@ -269,6 +281,17 @@
     </repositories>
 
     <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
         <pluginRepository>
             <id>aerocivil-nexus</id>
             <name>Aerocivil Nexus repository</name>
