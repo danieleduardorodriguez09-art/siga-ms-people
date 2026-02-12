@@ -35,10 +35,11 @@ services:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: "dev"
-      SPRING_DATASOURCE_URL: "jdbc:oracle:thin:@//oracle:1521/XEPDB1"
+      SPRING_DATASOURCE_URL: "jdbc:oracle:thin:@//host.docker.internal:1521/XEPDB1"
       SPRING_DATASOURCE_USERNAME: "SIGA_NEGOCIO"
       SPRING_DATASOURCE_PASSWORD: "SIGA_NEGOCIO"
       SERVER_PORT: "9406"
+      MANAGEMENT_TRACING_ENABLED: "false"
     ports:
       - "9407:9406"
     restart: unless-stopped
